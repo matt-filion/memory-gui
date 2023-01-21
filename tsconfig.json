@@ -1,0 +1,35 @@
+{
+  "extends": "@tsconfig/node16/tsconfig.json",
+  "include": [
+    "src/**/*.ts",
+  ],
+  "exclude": [
+    "node_modules/**",
+    "dist/**",
+    "spec/**"
+  ],
+  "compilerOptions": {
+    "moduleResolution": "Node",
+    "alwaysStrict": true,
+    "declaration": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "noImplicitAny": true,
+    "preserveConstEnums": true,
+    "removeComments": true,
+    "sourceMap": true,
+
+    "resolveJsonModule": true,
+    "noUnusedLocals": true,
+    "noImplicitThis": true,
+    "strictNullChecks": true,
+    "noImplicitReturns": true,
+    "suppressImplicitAnyIndexErrors": true,
+    "forceConsistentCasingInFileNames": true,
+    "strictPropertyInitialization": false,
+    "outDir": "dist",
+
+    "baseUrl": ".",
+    "rootDirs": ["src", "spec"]
+  }
+}

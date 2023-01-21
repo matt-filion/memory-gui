@@ -1,0 +1,130 @@
+# Welcome to Serverless!
+#
+# This file is the main config file for your service.
+# It's very minimal at this point and uses default values.
+# You can always add more config options for more control.
+# We've included some commented out config examples here.
+# Just uncomment any of them to get that config option.
+#
+# For full config options, check the docs:
+#    docs.serverless.com
+#
+# Happy Coding!
+
+service: memory-gui-service
+# app and org for use with dashboard.serverless.com
+#app: your-app-name
+#org: your-org-name
+
+# You can pin your service to only deploy with a specific Serverless version
+# Check out our docs for more details
+frameworkVersion: '3'
+
+custom:
+  serverless-layers:
+    dependenciesPath: ./package.json
+
+##
+# PLUGINS
+##
+plugins:
+  - serverless-plugin-typescript
+  - serverless-layers
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  stage: development
+  region: us-west-2
+
+  deploymentBucket:
+    # Name of an existing bucket to use (default: created by serverless)
+    name: serverless.tinyily.deploys
+    # On deployment, serverless prunes artifacts older than this limit (default: 5)
+    maxPreviousDeploymentArtifacts: 10
+    # Prevents public access via ACLs or bucket policies (default: false)
+    # Note: the deployment bucket is not public by default. These are additional ACLs.
+    blockPublicAccess: true
+    # Skip the creation of a default bucket policy when the deployment bucket is created (default: false)
+    skipPolicySetup: true
+    # Enable bucket versioning (default: false)
+    versioning: true
+    # Server-side encryption method
+    serverSideEncryption: AES256
+
+  # you can define service wide environment variables here
+  environment:
+    stage: ${self:provider.stage}
+    service: ${self:service}
+    memory_table: ${self:provider.stage}-memories
+    LOG_LEVEL: TRACE
+    HTML_BUCKET: !Ref MemoryGUIBucket
+
+  tags:
+    service: ${self:service}
+    version: ${file(./package.json):version}
+    stage: ${self:provider.stage}
+    
+# you can add statements to the Lambda function's IAM Role here
+  iam:
+    role:
+      statements:
+        - Effect: "Allow"
+          Action:
+            - "s3:PutObject"
+            - "s3:DeleteObject"
+            - "s3:HeadObject"
+          Resource: 
+            - !GetAtt MemoryGUIBucket.Arn
+            - Fn::Join:
+                - ''
+                - - !GetAtt MemoryGUIBucket.Arn
+                  - '/*'
+
+#
+# PACKAGE
+#
+package:
+  individually: true
+  excludeDevDependencies: true
+  patterns:
+    - '!node_modules/@aws-sdk/**'
+    - '!node_modules/@aws-crypto/**'
+    - 'src/memory.html'
+
+functions:
+  guiGenerator:
+    handler: ./src/stream/guiGenerator.handler
+    memorySize: 256
+    timeout: 29
+    ephemeralStorageSize: 512
+    events:
+      - stream:
+          type: dynamodb
+          arn: !ImportValue ${self:provider.stage}-MemoriesTableStreamArn
+
+# you can add CloudFormation resource templates here
+resources: # CloudFormation template syntax from here on.
+  Resources:
+    MemoryGUIBucket:
+      Type: 'AWS::S3::Bucket'
+      Properties:
+        AccessControl: PublicRead
+        BucketName: app.tinyily.com
+        CorsConfiguration:
+          CorsRules:
+            - AllowedHeaders:
+                - '*'
+              AllowedMethods:
+                - GET
+              AllowedOrigins:
+                - '*'
+              ExposedHeaders:
+                - Date
+              Id: GETCorsRule
+              MaxAge: 3600
+
+  Outputs:
+    MemoryGUIBucket:
+      Value: !Ref MemoryGUIBucket
+      Description: Name of the sample Amazon S3 bucket with a lifecycle configuration.
