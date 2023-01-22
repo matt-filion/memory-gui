@@ -12,13 +12,14 @@ export class GUIPersistence {
       Key: key,
       Bucket: process.env.HTML_BUCKET,
       Body: document,
+      ACL:'public-read',
       ContentLength: document.length,
+      ContentType: 'text/html',
       Metadata: {
         from,
         to,
-        'Content-Type': 'text/html'
       }
-    }
+    };
 
     console.log('Saving document.', request);
 

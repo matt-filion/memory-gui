@@ -72,6 +72,7 @@ provider:
         - Effect: "Allow"
           Action:
             - "s3:PutObject"
+            - "s3:PutObjectAcl"
             - "s3:DeleteObject"
             - "s3:HeadObject"
           Resource: 
@@ -95,8 +96,8 @@ package:
 functions:
   guiGenerator:
     handler: ./src/stream/guiGenerator.handler
-    memorySize: 256
-    timeout: 29
+    memorySize: 128
+    timeout: 60
     ephemeralStorageSize: 512
     events:
       - stream:

@@ -13,14 +13,15 @@
   <meta name='viewport' content='width=device-width, initial-scale=1'>
   <meta http-equiv='X-UA-Compatible' content='IE=edge'>
   <title>{{title}}</title>
+  <!-- <meta property="og:url" content="TBD" /> -->
   <meta property="og:title" content="{{title}}" />
   <meta property="og:description" content="{{summary}}" />
   <meta property="og:type" content="article" />
   <meta property="og:locale" content="en_us" />
   <!-- {{#if image}} -->
   <meta property="og:image" content="{{image}}" />
-  <meta property="og:image:width" content="1080" />
-  <meta property="og:image:height" content="540" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
   <!-- Material Design -->
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
   
@@ -58,6 +59,10 @@
       50%{background-position:100% 50%}
       100%{background-position:0% 50%}
     }
+    .v-card-text ul, .v-card-text ol {
+      padding-left: 1.5em;
+      padding-top: 1em;
+    }
   </style>
 </head>
 
@@ -76,13 +81,13 @@
         <v-container :scrollable="false" >
           <v-card
             class="mx-auto mt-4 memory-card"
-            max-width="540px"
+            max-width="630px"
             :elevation="4"
           >
             <v-img
               class="align-end text-white text-end"
               src="{{image}}"
-              width="540px"
+              width="630px"
               height="auto"
               cover
             >
@@ -90,7 +95,7 @@
               <v-card-title style="color: {{color}}">{{title}}</v-card-title>
             </v-img>
 
-            <v-card-text>
+            <v-card-text class="pl-1 pr-1">
               {{{content}}}
             </v-card-text>
             

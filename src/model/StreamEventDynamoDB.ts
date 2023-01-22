@@ -6,6 +6,7 @@ export interface StreamEventDynamoDB<T> {
         [key: string]: DynamoDBValue;
     },
     NewImage: T,
+    OldImage: T,
     SequenceNumber: number,
     SizeBytes: number,
     StreamViewType: 'NEW_IMAGE' | string;
